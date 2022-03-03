@@ -1,6 +1,6 @@
-KanapData= [];
-var ProductList="";
-var y = 0;
+let kanapData= [];
+let ProductList="";
+let y = 0;
 
 
 async function FetchData() {
@@ -8,31 +8,26 @@ async function FetchData() {
     await fetch("http://localhost:3000/api/products")
     .then(res => res.json())
     .then((res2) =>{
-        KanapData = res2;
-        console.table(KanapData);
-        y = KanapData.length;
+        kanapData = res2;
+        console.table(kanapData);
+        y = kanapData.length;
     })
+    GetProducts();
 }
 
- function CreatElem(i){
-    return( `<a href="./product.html?id=${KanapData[i]._id}"><article> 
-    <img src="${KanapData[i].imageUrl}" alt="${KanapData[i].altTxt}">
-    <h3 class="productName">"${KanapData[i].name}"</h3>
-    <p class="productDescription">"${KanapData[i].description}"</p>
+function CreatElem(i){
+    return( `<a href="./product.html?id=${kanapData[i]._id}"><article> 
+    <img src="${kanapData[i].imageUrl}" alt="${kanapData[i].altTxt}">
+    <h3 class="productName">"${kanapData[i].name}"</h3>
+    <p class="productDescription">"${kanapData[i].description}"</p>
     </article></a>`) ;
 }
 
 
-
-async function GetLine(){
-
-    await FetchData()
-    var i = 0;
-    GetProducts(i)
-}
-
-async function GetProducts(i)
+async function GetProducts()
 {
+    let i = 0;
+
     while (i < y){
     
         if (i == 0)
@@ -45,5 +40,5 @@ async function GetProducts(i)
     MyVar.innerHTML= ProductList
 }
 
-GetLine();
+FetchData();
 
