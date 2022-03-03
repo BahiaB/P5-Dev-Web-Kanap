@@ -22,6 +22,8 @@ async function FetchData() {
     </article></a>`) ;
 }
 
+
+
 async function GetLine(){
 
     await FetchData()
