@@ -1,5 +1,7 @@
 let kanapData = [];
 let cart = localStorage;
+let productList = "";
+
 console.table(cart);
 
 
@@ -14,25 +16,35 @@ async function fetchData() {
     })
 }
 
+function getIndex(id){ // obtenir le bon index (y) de l'élément (dans kanapData) en comparant les _id
+    
+  for (let y = 0 ; y < kanapData.length; y++)
+  {
+      if (id == kanapData[y]._id)
+      {
+          console.log(y);
+          return(y);
+      }
+  }
+}
 
-
-function    displayElem(i)
+function    displayElem(i) // Applique le Inner html au (i)ème element du local storage 
 {
+    let y = 0;
     console.log("cart-length=",cart.length)
     console.log("displayElem =",i);
-    let MyVar = document.getElementById("cart__items");
-    console.log(localStorage[i]);
-    let line = JSON.parse(cart[i]);
-    console.log("line =",line);     
-    MyVar.innerHTML= ` <article class="cart__item" data-id=${line.productId} data-color=${line.productColor}>
+    line = JSON.parse(cart[i]);
+    console.log("line =",line);   
+    y = getIndex(line.productId);  
+    return( ` <article class="cart__item" data-id=${line.productId} data-color=${line.productColor}>
        <div class="cart__item__img">
-         <img src=${kanapData[i].imageUrl}  alt=${kanapData[i].altTxt}>
+         <img src=${kanapData[y].imageUrl}  alt=${kanapData[y].altTxt}>
        </div>
        <div class="cart__item__content">
          <div class="cart__item__content__description">
-           <h2>${kanapData[i].name}</h2>
+           <h2>${kanapData[y].name}</h2>
            <p>${line.productColor}</p>
-           <p>${kanapData[i].price} €</p>
+           <p>${kanapData[y].price} €</p>
          </div>
          <div class="cart__item__content__settings">
            <div class="cart__item__content__settings__quantity">
@@ -44,20 +56,28 @@ function    displayElem(i)
            </div>
          </div>
        </div>
-     </article>  `
+     </article>  `)
         
     
 }
 
-async function Display()
+async function Display() // stock les elements du panier. 
 {
     await fetchData();
     
-    for (let i = 0; i < localStorage.length; i++)
+    for (let i = 0; i < cart.length; i++)
     {
-        displayElem(i);
-        console.log(i);
+      if (i == 0)
+            productList = displayElem(i);
+      else
+            productList += displayElem(i);
+      
+
     }
+    let cartList =  document.getElementById("cart__items");
+    cartList.innerHTML = productList;  // affichage de tout les elements du panier
 }
 
+
+//localStorage.clear(cart);
 Display();

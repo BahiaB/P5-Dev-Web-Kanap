@@ -1,7 +1,7 @@
 let kanapData = [];
 let str = window.location.href;
 let url = new URL(str);
-let id = url.searchParams.get("id");
+let id = url.searchParams.get("id"); 
 console.log(id);
 let cart = [];
 
@@ -66,7 +66,7 @@ function displayColor(i){// Recuperation des couleurs dans le dom et les affiche
 
 }
 
-async function displayAll(){ /* call for each display function */
+async function displayAll(){ /* appel de chaque fonction DIsplay */
     await FetchData();
     let i = getIndex();
     displayImg(i);
@@ -77,7 +77,7 @@ async function displayAll(){ /* call for each display function */
 }
 
 
-function checkNewElem(newProduct){
+function checkNewElem(newProduct){ // check si l'element existe deja dans le panier.
     
     if (!localStorage[0])
         return(0);
@@ -87,7 +87,7 @@ function checkNewElem(newProduct){
         let line = localStorage.getItem(i);
         line = JSON.parse(line)
         console.log(line);
-       if (newProduct.productId == line.productId && newProduct.productColor == line.productColor)
+       if (newProduct.productId == line.productId && newProduct.productColor == line.productColor)// si il existe comparer les id et les couleurs et update de la quantitée
         {
             console.log("meme id meme quantité")
             console.log(newProduct.productId)
@@ -97,7 +97,7 @@ function checkNewElem(newProduct){
             line.productQuantity = (parseInt(newProduct.productQuantity, 10 )+ parseInt(line.productQuantity, 10)).toString();
             console.log(line.productQuantity)
             line = JSON.stringify(line)
-            localStorage.setItem(i, line)
+            localStorage.setItem(i, line) 
            return(1);
         }
        
@@ -106,7 +106,7 @@ function checkNewElem(newProduct){
 
 }
 
-function addToCart()
+function addToCart() // creation de l'objet  
 {
     let colorChoice = document.querySelector("#colors").value;
     let quantityChoice = document.querySelector("#quantity").value;
@@ -117,7 +117,7 @@ function addToCart()
         productQuantity: Number(quantityChoice)
     }
     let elemCart = JSON.stringify(newProduct);
-    if (checkNewElem(newProduct) == 0)
+    if (checkNewElem(newProduct) == 0) // si l'objet n'existe pas dans le localStorage on le creer ici
     {
         console.log("ici");
         localStorage[localStorage.length]= elemCart;
