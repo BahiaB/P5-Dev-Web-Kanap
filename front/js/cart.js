@@ -2,6 +2,7 @@ let kanapData = [];
 let cart = localStorage;
 let productList = "";
 
+
 console.table(cart);
 
 
@@ -76,8 +77,136 @@ async function Display() // stock les elements du panier.
     }
     let cartList =  document.getElementById("cart__items");
     cartList.innerHTML = productList;  // affichage de tout les elements du panier
+    getTotal();
 }
+
+
+function  getTotal(){// obtenir le montant total de la commande
+
+  let elemsQty = document.getElementsByClassName('itemQuantity');
+  let totalQtt = 0;
+  let storageLength = elemsQty.length
+  let y = getIndex();
+  console.log("elemsQty lenght = " , storageLength);
+  
+
+  for (let i = 0; i < cart.length; i++) // obtenir le nombre d'items dans le panier
+  {
+    console.log("elem qqt =" ,(elemsQty[i].value))
+    totalQtt += (elemsQty[i].valueAsNumber);
+    console.log("cart elemsqty[i] =" ,Number(elemsQty[i].value));
+    console.log("cart lenth total =" ,totalQtt);
+   
+  }
+  let productTotalQuantity = document.getElementById('totalQuantity');
+    productTotalQuantity.innerHTML = totalQtt;
+    console.log(totalQtt);
+
+ /* cartTotalPrice = 0;
+  console.log(localStorage);
+  for (let i = 0; i < totalQtt; i++)
+  {
+    console.log("ici" );
+    console.log("cart =",cart);
+    y = getIndex(cart.productId);
+    console.log(" y = ", y)
+   // cartTotalPrice += Number(elemsQty[i].value) * Number(kanapData[y].price);
+  }*/
+}
+
+function  formValidation(){ // validation des champs du formulaire
+  let form = document.querySelector(".cart__order__form");
+  let charReg =new RegExp("^[a-zA-Z ,.'-]+$");
+  let emailReg = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
+  let addressReg = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
+
+  
+  form.firstName.addEventListener('change', function() {// Ecoute de la modification du prénom
+    validFirstName(this);
+  });
+ 
+  form.lastName.addEventListener('change', function() { // Ecoute de la modification du nom
+    validLastName(this);
+  });
+
+  
+  form.city.addEventListener('change', function() { // Ecoute de la modification de la ville
+    validCity(this);
+  });
+
+  form.address.addEventListener('change', function() { // Ecoute de la modification de l'address
+    validAddress(this);
+  });
+
+  form.email.addEventListener('change', function(){ // Ecoute de la modification de l'email
+    validEmail(this);
+
+  }) ;
+
+  // validation du prenom
+  const validFirstName = function(inputFirstName) {
+    let firstNameErrorMsg = inputFirstName.nextElementSibling;
+
+    if (charReg.test(inputFirstName.value)) {
+        firstNameErrorMsg.innerHTML = '';
+    } else {
+        firstNameErrorMsg.innerHTML = 'Veuillez renseigner ce champ.';
+    }
+};
+
+ //validation du nom
+ const validLastName = function(inputLastName) {
+  let lastNameErrorMsg = inputLastName.nextElementSibling;
+
+  if (charReg.test(inputLastName.value)) {
+      lastNameErrorMsg.innerHTML = '';
+  } else {
+      lastNameErrorMsg.innerHTML = 'Veuillez renseigner ce champ.';
+  }
+};
+
+//validation de la ville
+const validCity = function(inputCity) {
+  let cityErrorMsg = inputCity.nextElementSibling;
+
+  if (charReg.test(inputCity.value)) {
+      cityErrorMsg.innerHTML = '';
+  } else {
+      cityErrorMsg.innerHTML = 'Veuillez renseigner ce champ.';
+  }
+};
+
+  // Validation de l'adresse postal
+  const validAddress = function(inputAddress) {
+    let addressErrorMsg = inputAddress.nextElementSibling;
+
+        if (addressRegExp.test(inputAddress.value)) {
+            addressErrorMsg.innerHTML = '';
+        } else {
+            addressErrorMsg.innerHTML = 'Veuillez renseigner ce champ.';
+        }
+  };
+
+    //validation de l'email
+  const validEmail = function(inputEmail) {
+    let emailErrorMsg = inputEmail.nextElementSibling;
+
+    if (emailReg.test(inputEmail.value)) {
+        emailErrorMsg.innerHTML = '';
+    } else {
+        emailErrorMsg.innerHTML = 'Veuillez renseigner votre email.';
+    }
+  };
+}
+
+
+
+
+
+
+
 
 
 //localStorage.clear(cart);
 Display();
+formValidation();
