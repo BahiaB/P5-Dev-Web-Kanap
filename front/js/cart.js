@@ -205,7 +205,7 @@ function  postForm(event){ //Creation du formulaire pour la requete
   event.preventDefault();
     
   const data = new FormData(event.target);
-  console.log("bite")
+
 
   let idProducts = [];
   for (let i = 0; i < localStorage.length; i++){
