@@ -5,9 +5,7 @@ let productList = "";
 
 console.table(cart);
 
-
-
-async function fetchData() {
+//async function fetchData() {
 
     await fetch("http://localhost:3000/api/products")
     .then(res => res.json())
@@ -73,10 +71,10 @@ async function Display() // Affichage  des elements du panier
 	let y = 0
     for (let i = 0; i < cart.length; i++) {
         if (cart.getItem(i)) {
-            Line = cart.getItem(i)
+           let  Line = cart.getItem(i)
             Line = JSON.parse(Line)
-			console.log(line);
-			y = getIndex(line.productId)
+			console.log(Line);
+			y = getIndex(Line.productId)
             totalPrice += (kanapData[y].price * parseInt(Line.productQuantity))
             totalQuantity += parseInt(Line.productQuantity)
             FullData += displayElem(i)
@@ -114,56 +112,6 @@ function DeleteItem() { // supprimer un article et restructurer le localStorage
 	Display()
 }
 
-    
-   /* for (let i = 0; i < cart.length; i++)
-    {
-      if (i == 0)
-            productList = displayElem(i);
-      else
-            productList += displayElem(i);
-      
-
-    }
-    let cartList =  document.getElementById("cart__items");
-    cartList.innerHTML = productList;  // affichage de tout les elements du panier
-    getTotal();
-}*/
-
-
-/*function  getTotal(){// obtenir le montant total de la commande
-
-  let elemsQty = document.getElementsByClassName('itemQuantity');
-  let totalQtt = 0;
-  //let storageLength = elemsQty.length
-  let y = getIndex();
-  //console.log("elemsQty lenght = " , storageLength);
-  
-
-  for (let i = 0; i < cart.length; i++) // obtenir le nombre d'items dans le panier
-  {
-  //  console.log("elem qqt =" ,(elemsQty[i].value))
-    totalQtt += (elemsQty[i].valueAsNumber);
-   // console.log("cart elemsqty[i] =" ,Number(elemsQty[i].value));
-   // console.log("cart lenth total =" ,totalQtt);
-   
-  }
-  let productTotalQuantity = document.getElementById('totalQuantity');
-    productTotalQuantity.innerHTML = totalQtt;
-   // console.log(totalQtt);
-
-  cartTotalPrice = 0;
-  console.log(localStorage);
-  for (let i = 0; i < totalQtt; i++)
-  {
-    console.log("ici" );
-    console.log("cart =",cart);
-    line = JSON.parse(localStorage[i]);
-    y = getIndex(line.productId);
-    console.log(" y = ", y)
-    console.log(elemsQty)
-    cartTotalPrice += Number(elemsQty[i].value) * Number(kanapData[y].price);
-  }
-}*/
 
 function  formValidation(){ // validation des champs du formulaire
   let form = document.querySelector(".cart__order__form");
@@ -171,7 +119,7 @@ function  formValidation(){ // validation des champs du formulaire
   let emailReg = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
   let addressReg = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
 
-  console.log("par ici")
+  //console.log("par ici")
   form.firstName.addEventListener('change', function() {// Ecoute de la modification du prénom
     validFirstName(this);
   });
@@ -251,72 +199,60 @@ const validCity = function(inputCity) {
   
 }
 
-function  postForm(){ //Creation du formulaire pour la requete 
+
+function  postForm(event){ //Creation du formulaire pour la requete 
  
-  
-  let str = window.location.href;
-  let url = new URL(str);
-  let inputFirstName = url.searchParams.get("firstName"); 
-  let inputLastName = url.searchParams.get('lastName');
-  let inputAddress = url.searchParams.get('address')
-  let inputCity =  url.searchParams.get('city')
-  let inputEmail = url.searchParams.get('email')
-  console.log(inputFirstName);
+  event.preventDefault();
+    
+  const data = new FormData(event.target);
+  console.log("bite")
 
   let idProducts = [];
   for (let i = 0; i < localStorage.length; i++){
-    line = JSON.parse(localStorage[i]);
+    let line = JSON.parse(localStorage[i]);
     
-    console.log("line =",line);   
+    //console.log("line =",line);   
     idProducts[i] = line.productId;
   
   }
   console.log(idProducts);
 
-  const order = {
-    contact:{
-      firstName : inputFirstName,
-      lastName: inputLastName,
-      address: inputAddress,
-      city: inputCity,
-      email: inputEmail,
+  let order = {
+      contact : {
+          firstName : data.get('firstName'),
+          lastName : data.get('lastName'),
+          address : data.get('address'),
+          city : data.get('city'),
+          email : data.get('email')
       },
-      products_ID: idProducts,
-    }
+      products : idProducts
+        
+  }
+ 
   console.log(order);
 
-   /*const option = {
-    method : 'POST',
-    body : JSON.stringify(order),
-    headers:{
-      'Accept': 'application/json', 
-      "Content-Type": "application/json" 
-    },
-  }
+   
+  fetch(("http://localhost:3000/api/products/order"),{
+   method: "POST",
+   body: JSON.stringify(order),
+   headers: {"Accept":"application/json", "Content-Type": "application/json"} 
 
- fetch("http://localhost:3000/api/products/order", option)
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data);
-            localStorage.clear();
-            localStorage.setItem("orderId", data.orderId);
+ })
+  .then(response => response.json())
+  .then((data) => {
+  console.log(data);
+  localStorage.clear();
+  localStorage.setItem("orderId", data.orderId);
+  document.location.href = "confirmation.html";
+  })
+  .catch(err => console.log(err));
+ 
+ }
 
-            document.location.href = "confirmation.html";
-        })
-        .catch((err) => {
-            alert ("Problème avec fetch : " + err.message);
-        });*/
-        }
-
-        
-
-
-//localStorage.clear(cart);
+localStorage.clear;
 Display();
 formValidation();
-//postForm();
-const btnOrder = document.getElementById("order");
-btnOrder.addEventListener("click", postForm());
+document.querySelector("form").addEventListener('submit', postForm);
  
 
 

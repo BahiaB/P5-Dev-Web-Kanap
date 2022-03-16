@@ -42,3 +42,5 @@ async function GetProducts()
 
 FetchData();
 
+//localStorage.clear()
+
