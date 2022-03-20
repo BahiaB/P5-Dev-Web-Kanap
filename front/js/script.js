@@ -1,21 +1,19 @@
 let kanapData= [];
-let ProductList="";
-let y = 0;
 
+async function fetchData() 
+{
 
-async function FetchData() {
-
-    await fetch("http://localhost:3000/api/products")
-    .then(res => res.json())
-    .then((res2) =>{
-        kanapData = res2;
-        console.table(kanapData);
-        y = kanapData.length;
+	await fetch("http://localhost:3000/api/products")
+    .then(response => response.json())
+    .then((data) =>{
+    	kanapData = data;
+    	console.table(kanapData);
     })
-    GetProducts();
 }
 
-function CreatElem(i){
+// Création du ième élement 
+function creatElem(i)
+{
     return( `<a href="./product.html?id=${kanapData[i]._id}"><article> 
     <img src="${kanapData[i].imageUrl}" alt="${kanapData[i].altTxt}">
     <h3 class="productName">"${kanapData[i].name}"</h3>
@@ -23,24 +21,26 @@ function CreatElem(i){
     </article></a>`) ;
 }
 
-
-async function GetProducts()
+// Affichage de chaque item 
+async function getProducts()
 {
-    let i = 0;
+    let productList="";
+    await fetchData();
 
-    while (i < y){
+    for (i = 0; i < kanapData.length; i++){
     
         if (i == 0)
-            ProductList = CreatElem(i);
+            productList = creatElem(i);
         else
-            ProductList += CreatElem(i);
-        i++;
+            productList += creatElem(i);
+        //i++;
     }
-    let MyVar = document.getElementById("items");
-    MyVar.innerHTML= ProductList
+    let item = document.getElementById("items");
+    item.innerHTML= productList
 }
 
-FetchData();
+getProducts();
+
 
 //localStorage.clear()
 
