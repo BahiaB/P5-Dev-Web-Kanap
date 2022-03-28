@@ -31,9 +31,9 @@ function getIndex(id) {
 function displayElem(i) // Applique le Inner html au (i)ème element du local storage 
 {
   //let y = 0;
-  let line = JSON.parse(cart[i]);  
+  let line = JSON.parse(cart[i]);
   let y = getIndex(line.productId);
-  
+
   return (` <article class="cart__item" data-id=${line.productId} data-color=${line.productColor}>
        			<div class="cart__item__img">
          			<img src=${kanapData[y].imageUrl}  alt=${kanapData[y].altTxt}>
@@ -143,55 +143,51 @@ function formValidation() {
   const validFirstName = function (inputFirstName) {
     let firstNameErrorMsg = inputFirstName.nextElementSibling;
 
-    if (charReg.test(inputFirstName.value)) {
+    if (charReg.test(inputFirstName.value))
       firstNameErrorMsg.innerHTML = '';
-    } else {
-      firstNameErrorMsg.innerHTML = "Merci  de renseigner votre prénom, Veuillez n'utiliser aue des characteres alphabetique";
-    }
+    else
+      firstNameErrorMsg.innerHTML = "Merci  de renseigner votre prénom, Veuillez n'utiliser que des characteres alphabetique";
+
   };
 
   //validation du nom
   const validLastName = function (inputLastName) {
     let lastNameErrorMsg = inputLastName.nextElementSibling;
 
-    if (charReg.test(inputLastName.value)) {
+    if (charReg.test(inputLastName.value))
       lastNameErrorMsg.innerHTML = '';
-    } else {
-      lastNameErrorMsg.innerHTML = "Merci de renseigner nom de famille.Veuillez n'utiliser que des characteres alphabetique";
-    }
+    else
+      lastNameErrorMsg.innerHTML = "Merci de renseigner nom de famille. Veuillez n'utiliser que des characteres alphabetique";
   };
 
   //validation de la ville
   const validCity = function (inputCity) {
     let cityErrorMsg = inputCity.nextElementSibling;
 
-    if (charReg.test(inputCity.value)) {
+    if (charReg.test(inputCity.value))
       cityErrorMsg.innerHTML = '';
-    } else {
+    else
       cityErrorMsg.innerHTML = 'Veuillez renseigner votre ville.';
-    }
   };
 
   // Validation de l'adresse postal
   const validAddress = function (inputAddress) {
     let addressErrorMsg = inputAddress.nextElementSibling;
 
-    if (addressReg.test(inputAddress.value)) {
+    if (addressReg.test(inputAddress.value))
       addressErrorMsg.innerHTML = '';
-    } else {
+    else
       addressErrorMsg.innerHTML = 'Veuillez renseigner votre adresse.';
-    }
   };
 
   //validation de l'email
   const validEmail = function (inputEmail) {
     let emailErrorMsg = inputEmail.nextElementSibling;
 
-    if (emailReg.test(inputEmail.value)) {
+    if (emailReg.test(inputEmail.value))
       emailErrorMsg.innerHTML = '';
-    } else {
+    else
       emailErrorMsg.innerHTML = 'Veuillez renseigner votre email.';
-    }
   };
 
 }
@@ -199,41 +195,44 @@ function formValidation() {
 //Creation du formulaire pour la requete 
 function postForm(event) {
 
-  event.preventDefault();
-  const data = new FormData(event.target);
+  if (localStorage.length > 0) {
+    event.preventDefault();
+    const data = new FormData(event.target);
 
-  let idProducts = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    let line = JSON.parse(localStorage[i]);
-    idProducts[i] = line.productId;
-  }
-  console.log(idProducts);
+    let idProducts = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      let line = JSON.parse(localStorage[i]);
+      idProducts[i] = line.productId;
+    }
+    console.log(idProducts);
 
-  let order = {
-    contact: {
-      firstName: data.get('firstName'),
-      lastName: data.get('lastName'),
-      address: data.get('address'),
-      city: data.get('city'),
-      email: data.get('email')
-    },
-    products: idProducts
-  }
+    let order = {
+      contact: {
+        firstName: data.get('firstName'),
+        lastName: data.get('lastName'),
+        address: data.get('address'),
+        city: data.get('city'),
+        email: data.get('email')
+      },
+      products: idProducts
+    }
 
-  fetch(("http://localhost:3000/api/products/order"), {
-    method: "POST",
-    body: JSON.stringify(order),
-    headers: { "Accept": "application/json", "Content-Type": "application/json" }
+    fetch(("http://localhost:3000/api/products/order"), {
+      method: "POST",
+      body: JSON.stringify(order),
+      headers: { "Accept": "application/json", "Content-Type": "application/json" }
 
-  })
-    .then(response => response.json())
-    .then((data) => {
-      console.log(data);
-      localStorage.clear();
-
-      document.location.href = `confirmation.html?id=${data.orderId}`;
     })
-    .catch(err => console.log(err));
+      .then(response => response.json())
+      .then((data) => {
+        console.log(data);
+        localStorage.clear();
+        document.location.href = `confirmation.html?id=${data.orderId}`;
+      })
+      .catch(err => console.log(err));
+  }
+  else
+    window.alert("Votre panier est vide.")
 
 }
 

@@ -52,7 +52,7 @@ function displayColor(i) {
     document.getElementById("colors").innerHTML = fullColorStr;
 }
 
-// appel de chaque fonction Display
+// Appel de chaque fonction Display
 async function displayAll() {
     await FetchData();
     let i = getIndex();
@@ -87,7 +87,10 @@ function addToCart() {
     let quantityChoice = document.querySelector("#quantity").value;
 
     if (!colorChoice || quantityChoice <= 0 || quantityChoice > 100) {
-        window.alert("Le nombre d'article doit etre compris entre 0 et 100");
+        if (!colorChoice)
+            window.alert("Veuillez séléctionner une couleur")
+        else
+            window.alert("Le nombre d'article doit etre compris entre 0 et 100");
         return -1;
     }
     let newProduct = {
@@ -102,7 +105,6 @@ function addToCart() {
         localStorage[localStorage.length] = elemCart;
     }
     window.alert("L'article à bien été ajouté à votre panier ");
-    //console.log(localStorage);
 }
 
 displayAll();
