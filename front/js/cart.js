@@ -1,42 +1,40 @@
 let kanapData = [];
 let cart = localStorage;
+console.log(cart);
 //let productList = "";
 
 
-console.table(cart);
+//console.table(cart);
 
 async function fetchData() {
 
-    await fetch("http://localhost:3000/api/products")
+  await fetch("http://localhost:3000/api/products")
     .then(res => res.json())
-    .then((res2) =>{
-        kanapData = res2;
-        console.table(kanapData);
+    .then((res2) => {
+      kanapData = res2;
+      console.table(kanapData);
     })
 }
 
 // obtenir le bon index (y) de l'élément (dans kanapData) en comparant les _id
 
-function getIndex(id){
-    
-  for (let y = 0 ; y < kanapData.length; y++)
-  {
-      if (id == kanapData[y]._id)
-      {
-          console.log(y);
-          return(y);
-      }
+function getIndex(id) {
+
+  for (let y = 0; y < kanapData.length; y++) {
+    if (id == kanapData[y]._id) {
+      console.log(y);
+      return (y);
+    }
   }
 }
 
-function    displayElem(i) // Applique le Inner html au (i)ème element du local storage 
+function displayElem(i) // Applique le Inner html au (i)ème element du local storage 
 {
-	let y = 0;
-    let line = JSON.parse(cart[i]);
-    
-   // console.log("line =",line);   
-    y = getIndex(line.productId);  
-    return( ` <article class="cart__item" data-id=${line.productId} data-color=${line.productColor}>
+  //let y = 0;
+  let line = JSON.parse(cart[i]);  
+  let y = getIndex(line.productId);
+  
+  return (` <article class="cart__item" data-id=${line.productId} data-color=${line.productColor}>
        			<div class="cart__item__img">
          			<img src=${kanapData[y].imageUrl}  alt=${kanapData[y].altTxt}>
       			 </div>
@@ -59,187 +57,190 @@ function    displayElem(i) // Applique le Inner html au (i)ème element du local
      		  </article>  `)
 }
 
- // Affichage  des elements du panier
-async function Display()
-{
-    await fetchData();
-    let FullData = ""
-    let totalPrice = 0
-    let totalQuantity = 0
-	let y = 0
-    for (let i = 0; i < cart.length; i++) {
-        if (cart.getItem(i)) {
-           let  Line = cart.getItem(i)
-            Line = JSON.parse(Line)
-			y = getIndex(Line.productId)
-            totalPrice += (kanapData[y].price * parseInt(Line.productQuantity))
-            totalQuantity += parseInt(Line.productQuantity)
-            FullData += displayElem(i)
-            }
-        }
-        document.getElementById("cart__items").innerHTML = FullData
-        document.getElementById("totalQuantity").innerHTML = totalQuantity
-        document.getElementById("totalPrice").innerHTML = totalPrice + ',00'
-        for (let i = 0; i< cart.length; i++) {
-            if (cart.getItem(i)) { // Si un changement est operer sur les bouton de changement de quantité et de supression
-                document.getElementById(`articleNumber${i}`).addEventListener("change", ChangeQty);
-				document.getElementById(`deleteItem${i}`).addEventListener("click", DeleteItem)
-                }
-        }
+// Affichage  des elements du panier
+async function display() {
+  await fetchData();
+
+  if (localStorage.length == 0) {
+    window.alert("Votre panier est vide pour le moment")
+  }
+  let FullData = ""
+  let totalPrice = 0
+  let totalQuantity = 0
+  let y = 0
+  for (let i = 0; i < cart.length; i++) {
+    if (cart.getItem(i)) {
+      let Line = cart.getItem(i)
+      Line = JSON.parse(Line)
+      y = getIndex(Line.productId)
+      totalPrice += (kanapData[y].price * parseInt(Line.productQuantity))
+      totalQuantity += parseInt(Line.productQuantity)
+      FullData += displayElem(i)
+    }
+  }
+  document.getElementById("cart__items").innerHTML = FullData
+  document.getElementById("totalQuantity").innerHTML = totalQuantity
+  document.getElementById("totalPrice").innerHTML = totalPrice + ',00'
+  for (let i = 0; i < cart.length; i++) {
+    if (cart.getItem(i)) { // Si un changement est operer sur les bouton de changement de quantité et de supression
+      document.getElementById(`articleNumber${i}`).addEventListener("change", changeQty);
+      document.getElementById(`deleteItem${i}`).addEventListener("click", deleteItem)
+    }
+  }
 }
 
-function ChangeQty() {// changement de quantité directement depuis la page panier
-	let Line = cart.getItem(this.id.split('Number')[1])
-	Line = JSON.parse(Line)
-	if (this.value < 1 || this.value > 100)
-		return (0)
-	Line.productQuantity = (parseInt(this.value, 10))
-	cart.setItem(this.id.split('Number')[1], JSON.stringify(Line))
-	Display()
+function changeQty() {// changement de quantité directement depuis la page panier
+  let Line = cart.getItem(this.id.split('Number')[1])
+  Line = JSON.parse(Line)
+  if (this.value < 1 || this.value > 100)
+    return (0)
+  Line.productQuantity = (parseInt(this.value, 10))
+  cart.setItem(this.id.split('Number')[1], JSON.stringify(Line))
+  display()
 }
 
-function DeleteItem() { // supprimer un article et restructurer le localStorage
-	let i = parseInt(this.id.split("Item")[1])
-	while ( i < cart.length - 1) {
-		cart.setItem(i, cart.getItem(i + 1))
-		i++
-	}
-	cart.removeItem((cart.length - 1))
-	Display()
+function deleteItem() { // supprimer un article et restructurer le localStorage
+  let i = parseInt(this.id.split("Item")[1])
+  while (i < cart.length - 1) {
+    cart.setItem(i, cart.getItem(i + 1))
+    i++
+  }
+  cart.removeItem((cart.length - 1))
+  display()
 }
 
-
-function  formValidation(){ // validation des champs du formulaire
+// validation des champs du formulaire
+function formValidation() {
   let form = document.querySelector(".cart__order__form");
-  let charReg =new RegExp("^[a-zA-Z ,.'-]+$");
+  let charReg = new RegExp("^[a-zA-Z ,.'-]+$");
   let emailReg = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
   let addressReg = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
 
 
-  form.firstName.addEventListener('change', function() {// Ecoute de la modification du prénom
+  form.firstName.addEventListener('change', function () {// Ecoute de la modification du prénom
     validFirstName(this);
   });
- 
-  form.lastName.addEventListener('change', function() { // Ecoute de la modification du nom
+
+  form.lastName.addEventListener('change', function () { // Ecoute de la modification du nom
     validLastName(this);
   });
 
-  
-  form.city.addEventListener('change', function() { // Ecoute de la modification de la ville
+
+  form.city.addEventListener('change', function () { // Ecoute de la modification de la ville
     validCity(this);
   });
 
-  form.address.addEventListener('change', function() { // Ecoute de la modification de l'address
+  form.address.addEventListener('change', function () { // Ecoute de la modification de l'address
     validAddress(this);
   });
 
-  form.email.addEventListener('change', function(){ // Ecoute de la modification de l'email
+  form.email.addEventListener('change', function () { // Ecoute de la modification de l'email
     validEmail(this);
 
-  }) ;
+  });
 
   // validation du prenom
-  const validFirstName = function(inputFirstName) {
+  const validFirstName = function (inputFirstName) {
     let firstNameErrorMsg = inputFirstName.nextElementSibling;
 
     if (charReg.test(inputFirstName.value)) {
-        firstNameErrorMsg.innerHTML = '';
+      firstNameErrorMsg.innerHTML = '';
     } else {
-        firstNameErrorMsg.innerHTML = 'Veuillez renseigner votre prénom.';
+      firstNameErrorMsg.innerHTML = "Merci  de renseigner votre prénom, Veuillez n'utiliser aue des characteres alphabetique";
     }
   };
 
- //validation du nom
-  const validLastName = function(inputLastName) {
-  let lastNameErrorMsg = inputLastName.nextElementSibling;
+  //validation du nom
+  const validLastName = function (inputLastName) {
+    let lastNameErrorMsg = inputLastName.nextElementSibling;
 
-  if (charReg.test(inputLastName.value)) {
+    if (charReg.test(inputLastName.value)) {
       lastNameErrorMsg.innerHTML = '';
-  } else {
-      lastNameErrorMsg.innerHTML = 'Veuillez renseigner nom de famille.';
-  }
-};
-
-//validation de la ville
-const validCity = function(inputCity) {
-  let cityErrorMsg = inputCity.nextElementSibling;
-
-  if (charReg.test(inputCity.value)) {
-      cityErrorMsg.innerHTML = '';
-  } else {
-      cityErrorMsg.innerHTML = 'Veuillez renseigner votre ville.';
-  }
-};
-
-  // Validation de l'adresse postal
-  const validAddress = function(inputAddress) {
-    let addressErrorMsg = inputAddress.nextElementSibling;
-
-        if (addressReg.test(inputAddress.value)) {
-            addressErrorMsg.innerHTML = '';
-        } else {
-            addressErrorMsg.innerHTML = 'Veuillez renseigner votre adresse.';
-        }
+    } else {
+      lastNameErrorMsg.innerHTML = "Merci de renseigner nom de famille.Veuillez n'utiliser que des characteres alphabetique";
+    }
   };
 
-    //validation de l'email
-  const validEmail = function(inputEmail) {
+  //validation de la ville
+  const validCity = function (inputCity) {
+    let cityErrorMsg = inputCity.nextElementSibling;
+
+    if (charReg.test(inputCity.value)) {
+      cityErrorMsg.innerHTML = '';
+    } else {
+      cityErrorMsg.innerHTML = 'Veuillez renseigner votre ville.';
+    }
+  };
+
+  // Validation de l'adresse postal
+  const validAddress = function (inputAddress) {
+    let addressErrorMsg = inputAddress.nextElementSibling;
+
+    if (addressReg.test(inputAddress.value)) {
+      addressErrorMsg.innerHTML = '';
+    } else {
+      addressErrorMsg.innerHTML = 'Veuillez renseigner votre adresse.';
+    }
+  };
+
+  //validation de l'email
+  const validEmail = function (inputEmail) {
     let emailErrorMsg = inputEmail.nextElementSibling;
 
     if (emailReg.test(inputEmail.value)) {
-        emailErrorMsg.innerHTML = '';
+      emailErrorMsg.innerHTML = '';
     } else {
-        emailErrorMsg.innerHTML = 'Veuillez renseigner votre email.';
+      emailErrorMsg.innerHTML = 'Veuillez renseigner votre email.';
     }
   };
-  
+
 }
 
 //Creation du formulaire pour la requete 
-function  postForm(event){ 
- 
+function postForm(event) {
+
   event.preventDefault();
   const data = new FormData(event.target);
 
   let idProducts = [];
-  for (let i = 0; i < localStorage.length; i++){
+  for (let i = 0; i < localStorage.length; i++) {
     let line = JSON.parse(localStorage[i]);
     idProducts[i] = line.productId;
   }
   console.log(idProducts);
 
   let order = {
-      contact : {
-          firstName : data.get('firstName'),
-          lastName : data.get('lastName'),
-          address : data.get('address'),
-          city : data.get('city'),
-          email : data.get('email')
-      },
-      products : idProducts
+    contact: {
+      firstName: data.get('firstName'),
+      lastName: data.get('lastName'),
+      address: data.get('address'),
+      city: data.get('city'),
+      email: data.get('email')
+    },
+    products: idProducts
   }
-   
-  fetch(("http://localhost:3000/api/products/order"),{
-   method: "POST",
-   body: JSON.stringify(order),
-   headers: {"Accept":"application/json", "Content-Type": "application/json"} 
 
- })
-  .then(response => response.json())
-  .then((data) => {
-  console.log(data);
-  localStorage.clear();
-  
-  document.location.href = `confirmation.html?id=${data.orderId}`;
+  fetch(("http://localhost:3000/api/products/order"), {
+    method: "POST",
+    body: JSON.stringify(order),
+    headers: { "Accept": "application/json", "Content-Type": "application/json" }
+
   })
-  .catch(err => console.log(err));
- 
- }
+    .then(response => response.json())
+    .then((data) => {
+      console.log(data);
+      localStorage.clear();
 
-//localStorage.clear;
-Display();
+      document.location.href = `confirmation.html?id=${data.orderId}`;
+    })
+    .catch(err => console.log(err));
+
+}
+
+localStorage.clear;
+display();
 formValidation();
 document.querySelector("form").addEventListener('submit', postForm);
- 
+
 
 
