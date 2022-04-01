@@ -1,6 +1,8 @@
 let kanapData = [];
 let str = window.location.href;
+console.log(str);
 let url = new URL(str);
+console.log(url);
 let id = url.searchParams.get("id");
 let cart = [];
 
@@ -90,7 +92,7 @@ function addToCart() {
         if (!colorChoice)
             window.alert("Veuillez séléctionner une couleur")
         else
-            window.alert("Le nombre d'article doit etre compris entre 0 et 100");
+            window.alert("Le nombre d'article doit etre compris entre 1 et 100");
         return -1;
     }
     let newProduct = {
