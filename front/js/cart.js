@@ -117,7 +117,6 @@ function formValidation() {
 	let emailReg = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
 	let addressReg = new RegExp("^[0-9]{1,3}(?:(?:[,. ]){1}[-a-zA-Zàâäéèêëïîôöùûüç]+)+");
 
-
 	form.firstName.addEventListener('change', function () {// Ecoute de la modification du prénom
 		validFirstName(this);
 	});

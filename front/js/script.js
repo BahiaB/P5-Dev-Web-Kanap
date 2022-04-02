@@ -10,7 +10,7 @@ async function fetchData() {
         })
 }
 
-// Création  de la carte  
+// Création  de l'item  
 function creatElem(i) {
     return (`<a href="./product.html?id=${kanapData[i]._id}"><article> 
     <img src="${kanapData[i].imageUrl}" alt="${kanapData[i].altTxt}">
@@ -30,7 +30,6 @@ async function getProducts() {
             productList = creatElem(i);
         else
             productList += creatElem(i);
-        //i++;
     }
     let item = document.getElementById("items");
     item.innerHTML = productList;
